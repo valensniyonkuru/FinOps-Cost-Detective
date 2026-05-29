@@ -1,0 +1,30 @@
+# Terraform state — contains sensitive data, never commit
+terraform.tfstate
+terraform.tfstate.backup
+*.tfstate
+*.tfstate.*
+
+# Terraform local config — contains real account values
+terraform.tfvars
+
+# Terraform working directory
+.terraform/
+
+# Crash logs
+crash.log
+crash.*.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+.venv/
+venv/
+dist/
+
+# Output files
+*.json
+cost_report.md
+zombie_scan.json
+gc_audit.json
