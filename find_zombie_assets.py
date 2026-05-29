@@ -271,7 +271,7 @@ def main():
         try:
             results = fn(*fn_args)
             all_findings.extend(results)
-            print(f"{'⚠️  ' + str(len(results)) + ' found' if results else '✅ clean'}")
+            print(f"{' ' + str(len(results)) + ' found' if results else ' clean'}")
         except ClientError as e:
             print(f"⚡ skipped ({e.response['Error']['Code']})")
 
@@ -318,7 +318,7 @@ def main():
     if args.output:
         with open(args.output, "w") as fh:
             json.dump(report, fh, indent=2, default=str)
-        print(f"📄 Report saved to {args.output}")
+        print(f" Report saved to {args.output}")
 
     return report
 
