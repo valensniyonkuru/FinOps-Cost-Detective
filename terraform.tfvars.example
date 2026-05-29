@@ -1,0 +1,38 @@
+# ============================================================
+#  terraform.tfvars.example
+#  Copy this file to terraform.tfvars and fill in your values.
+#  NEVER commit terraform.tfvars to source control.
+# ============================================================
+
+# ── General ─────────────────────────────────────────────────
+aws_region          = "us-east-1"
+environment         = "sandbox"
+owner_email         = "your-name@example.com"
+default_cost_center = "finops-audit-2025"
+
+# ── Budget & Alerts ─────────────────────────────────────────
+budget_limit_amount    = 50     # USD — alert when forecast exceeds this
+budget_alert_threshold = 80     # Percent — alert at 80 % of limit
+sns_subscription_email = "your-name@example.com"
+
+# ── Wasteful Resources Demo ──────────────────────────────────
+create_wasteful_resources = true
+idle_instance_type        = "t3.large"
+
+# ── Networking (required for ASG) ───────────────────────────
+vpc_id     = "vpc-0abc123def456789a"
+subnet_ids = [
+  "subnet-0abc123def456789a",   # us-east-1a
+  "subnet-0def456abc123789b",   # us-east-1b
+  "subnet-0789abc456def123c",   # us-east-1c
+]
+
+# ── Auto Scaling Group ───────────────────────────────────────
+asg_on_demand_base   = 1    # Always keep 1 OD instance running
+asg_spot_percentage  = 70   # 70 % of scale-out goes to Spot
+asg_min_size         = 1
+asg_max_size         = 6
+asg_desired_capacity = 2
+
+# ── AWS Config S3 Bucket ─────────────────────────────────────
+config_s3_bucket_name = "my-org-aws-config-finops-audit-2025"   # Must be globally unique
