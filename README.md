@@ -238,59 +238,93 @@ A Mixed-Instance Auto Scaling Group replaced a hypothetical On-Demand-only fleet
 
 ## Live Deployment Evidence
 
-All resources below were deployed on **2026-05-29** and verified in the AWS Console.
+All resources below were deployed on **2026-05-29** and verified in the AWS Console (account `734849394099`, region `eu-central-1`).
 
-### EC2 Instances — Console View
+### 1. SNS Email Subscription Confirmed
 
-Running instances in `eu-central-1` after Terraform apply:
+Email received at `valens.niyonkuru@amalitechtraining.org` confirming subscription to the cost alert topic.
+
+![SNS Email Confirmation](docs/screenshots/01-sns-email-confirmation.png)
+
+```
+Topic: arn:aws:sns:eu-central-1:734849394099:finops-cost-alerts-sandbox
+```
+
+---
+
+### 2. EC2 Instances — Zombie + ASG Instances Running
+
+The idle `t3.large` demo instance and two Mixed-Instance ASG instances visible in the console.
+
+![EC2 Instances](docs/screenshots/02-ec2-instances.png)
 
 | Name | Instance ID | Type | State | Purpose |
 |---|---|---|---|---|
-| finops-mixed-asg-sandbox | i-0f4a3158bcf594454 | t3.medium | Running | ASG instance (On-Demand base) |
+| finops-mixed-asg-sandbox | i-0f4a3158bcf594454 | t3.medium | Running | ASG instance |
 | finops-mixed-asg-sandbox | i-07b28328397cfc5c9 | t3.medium | Running | ASG instance |
-| idle-large-instance-demo | i-01caf88c8befe4554 | t3.large | Running | Zombie demo instance |
+| idle-large-instance-demo | i-01caf88c8befe4554 | t3.large | Running | Zombie demo (~0% CPU) |
 
-### Elastic IPs — Console View
+---
 
-5 Elastic IPs in account — `zombie-eip-1` and `zombie-eip-2` are unassociated (waste):
+### 3. Elastic IPs — Unassociated Zombie EIPs
 
-| Name | IP | Allocation ID | Status |
-|---|---|---|---|
-| zombie-eip-1 | 63.177.152.115 | eipalloc-0ecde7a01cf7997a3 | Unassociated |
-| zombie-eip-2 | 63.183.108.83 | eipalloc-005fe2d2956c20278 | Unassociated |
+Two unassociated Elastic IPs (`zombie-eip-1`, `zombie-eip-2`) wasting $3.60/month each.
 
-### ASG Detail — At Desired Capacity
+![Elastic IPs](docs/screenshots/03-elastic-ips.png)
+
+| Name | Public IP | Allocation ID |
+|---|---|---|
+| zombie-eip-1 | 63.177.152.115 | eipalloc-0ecde7a01cf7997a3 |
+| zombie-eip-2 | 63.183.108.83 | eipalloc-005fe2d2956c20278 |
+
+---
+
+### 4. Auto Scaling Group — Mixed Instances Policy
+
+`finops-mixed-asg-sandbox` running with On-Demand base + 70% Spot scaling, at desired capacity.
+
+![ASG Detail](docs/screenshots/04-asg-detail.png)
 
 ```
-finops-mixed-asg-sandbox
 Desired: 1  |  Min: 1  |  Max: 6  |  Status: At desired capacity
-Created: Fri May 29 2026 14:58:20 GMT+0200
+ARN: arn:aws:autoscaling:eu-central-1:734849394099:autoScalingGroup:c8c2b4ef-d103-4d2b-94fa-6584dca2f42f:autoScalingGroupName/finops-mixed-asg-sandbox
 ```
 
-### S3 Config Bucket
+---
+
+### 5. S3 Config Bucket
+
+Config delivery bucket encrypted, versioned, and public-access blocked.
+
+![S3 Config Bucket](docs/screenshots/05-s3-config-bucket.png)
 
 ```
-finops-config-audit-734849394099
+Bucket: finops-config-audit-734849394099
 Region: Europe (Frankfurt) eu-central-1
-Created: May 29, 2026, 14:57:54 (UTC+02:00)
+Created: May 29, 2026 14:57:54 UTC+02:00
 ```
 
-### Budget — Healthy
+---
+
+### 6. AWS Budget Detail — Healthy
+
+Monthly budget of $50 active with actual + forecast alerts wired to SNS.
+
+![Budget Detail](docs/screenshots/06-budget-detail.png)
 
 ```
-finops-monthly-budget-sandbox
-Type: Cost budget  |  Amount: $50.00/month  |  Period: Monthly
-Status: Healthy  |  Spent this month: $7.16
+Budget: finops-monthly-budget-sandbox
+Amount: $50.00/month  |  Spent: $7.16  |  Status: Healthy
 ```
 
-### SNS Subscription Email
+---
+
+### 7. Budgets Overview
+
+![Budgets Overview](docs/screenshots/07-budgets-overview.png)
 
 ```
-From: AWS Notifications <no-reply@sns.amazonaws.com>
-To: valens.niyonkuru@amalitechtraining.org
-Subject: AWS Notification - Subscription Confirmation
-
-Topic: arn:aws:sns:eu-central-1:734849394099:finops-cost-alerts-sandbox
+finops-monthly-budget-sandbox  |  Status: OK  |  Health: Healthy  |  $50.00
 ```
 
 ---
