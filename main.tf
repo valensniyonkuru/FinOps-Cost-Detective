@@ -11,9 +11,9 @@ module "wasteful_resources" {
   count  = var.create_wasteful_resources ? 1 : 0
   source = "./modules/wasteful_resources"
 
-  environment         = var.environment
-  idle_instance_type  = var.idle_instance_type
-  subnet_id           = var.subnet_ids[0]
+  environment        = var.environment
+  idle_instance_type = var.idle_instance_type
+  subnet_id          = var.subnet_ids[0]
 }
 
 # ── 2. Governance ───────────────────────────────────────────

@@ -243,7 +243,7 @@ def main():
 
     # ── Summary ──────────────────────────────────────────────────────────────
     print(f"\n{'='*60}")
-    print(f"  GC COMPLETE")
+    print("  GC COMPLETE")
     print(f"  Deleted:  {deleted_count} volumes")
     print(f"  Skipped:  {skipped_count} volumes")
     print(f"  Savings:  ${total_saved:,.2f}/mo  (${total_saved * 12:,.2f}/yr)")

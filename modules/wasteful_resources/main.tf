@@ -27,12 +27,12 @@ data "aws_ami" "amazon_linux" {
 resource "aws_ebs_volume" "zombie" {
   count             = 3
   availability_zone = "${data.aws_region.current.name}a"
-  size              = 20 + (count.index * 10)   # 20 GB, 30 GB, 40 GB
+  size              = 20 + (count.index * 10) # 20 GB, 30 GB, 40 GB
   type              = "gp3"
 
   tags = {
     Name       = "zombie-ebs-${count.index + 1}"
-    CostCenter = "UNTAGGED"   # Intentionally wrong — triggers Config rule
+    CostCenter = "UNTAGGED" # Intentionally wrong — triggers Config rule
     Purpose    = "demo-waste"
   }
 }
@@ -43,8 +43,8 @@ resource "aws_eip" "zombie" {
   domain = "vpc"
 
   tags = {
-    Name       = "zombie-eip-${count.index + 1}"
-    Purpose    = "demo-waste"
+    Name    = "zombie-eip-${count.index + 1}"
+    Purpose = "demo-waste"
   }
 }
 
@@ -63,7 +63,7 @@ resource "aws_instance" "idle_large" {
 
   tags = {
     Name       = "idle-large-instance-demo"
-    CostCenter = "UNTAGGED"   # Intentionally wrong
+    CostCenter = "UNTAGGED" # Intentionally wrong
     Purpose    = "demo-waste"
   }
 }

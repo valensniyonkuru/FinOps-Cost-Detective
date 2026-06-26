@@ -167,7 +167,7 @@ def render_console(report: dict):
 
     # Cost by CostCenter
     if report["cost_by_cost_center"]:
-        print(f"\n  🏷  Cost by CostCenter Tag")
+        print("\n  🏷  Cost by CostCenter Tag")
         untagged_cost = next((x["cost"] for x in report["cost_by_cost_center"] if x["tag_value"] == "UNTAGGED"), 0)
         if untagged_cost > 0:
             pct = untagged_cost / mtd * 100 if mtd else 0
@@ -176,7 +176,7 @@ def render_console(report: dict):
             print(f"  {c['tag_value']:<40} ${c['cost']:>10,.2f}")
 
     # Recommendations
-    print(f"\n  💡 Recommended Actions")
+    print("\n  💡 Recommended Actions")
     for i, rec in enumerate(report["recommendations"], 1):
         print(f"  {i}. {rec['action']}")
         if rec.get("estimated_savings"):
@@ -187,18 +187,18 @@ def render_console(report: dict):
 
 def render_markdown(report: dict) -> str:
     lines = [
-        f"# AWS FinOps Cost Report",
-        f"",
+        "# AWS FinOps Cost Report",
+        "",
         f"**Generated:** {report['generated_at'][:19]} UTC  ",
         f"**Account:** `{report['account_id']}`  ",
         f"**Region:** `{report['region']}`",
-        f"",
-        f"---",
-        f"",
-        f"## Month-to-Date Summary",
-        f"",
-        f"| Metric | Value |",
-        f"|--------|-------|",
+        "",
+        "---",
+        "",
+        "## Month-to-Date Summary",
+        "",
+        "| Metric | Value |",
+        "|--------|-------|",
         f"| Period | {report['mtd_period']['start']} → {report['mtd_period']['end']} |",
         f"| MTD Total | **${report['mtd_total']:,.2f}** |",
     ]
@@ -211,40 +211,40 @@ def render_markdown(report: dict) -> str:
         ]
 
     lines += [
-        f"",
-        f"## Top 10 Services by Spend",
-        f"",
-        f"| # | Service | Cost (USD) |",
-        f"|---|---------|-----------|",
+        "",
+        "## Top 10 Services by Spend",
+        "",
+        "| # | Service | Cost (USD) |",
+        "|---|---------|-----------|",
     ]
     for i, s in enumerate(report["top_services"][:10], 1):
         lines.append(f"| {i} | {s['service']} | ${s['cost']:,.2f} |")
 
     lines += [
-        f"",
-        f"## Monthly Trend",
-        f"",
-        f"| Month | Spend (USD) |",
-        f"|-------|------------|",
+        "",
+        "## Monthly Trend",
+        "",
+        "| Month | Spend (USD) |",
+        "|-------|------------|",
     ]
     for m in report["monthly_trend"]:
         lines.append(f"| {m['month']} | ${m['cost']:,.2f} |")
 
     if report["cost_by_cost_center"]:
         lines += [
-            f"",
-            f"## Cost by CostCenter Tag",
-            f"",
-            f"| CostCenter | Cost (USD) |",
-            f"|-----------|-----------|",
+            "",
+            "## Cost by CostCenter Tag",
+            "",
+            "| CostCenter | Cost (USD) |",
+            "|-----------|-----------|",
         ]
         for c in report["cost_by_cost_center"][:10]:
             lines.append(f"| {c['tag_value']} | ${c['cost']:,.2f} |")
 
     lines += [
-        f"",
-        f"## Recommended Actions",
-        f"",
+        "",
+        "## Recommended Actions",
+        "",
     ]
     for i, rec in enumerate(report["recommendations"], 1):
         savings = f" *(Est. savings: {rec['estimated_savings']})*" if rec.get("estimated_savings") else ""
@@ -281,7 +281,7 @@ def build_recommendations(report: dict) -> list[dict]:
     ec2_spend = next((s["cost"] for s in report["top_services"] if "EC2" in s["service"]), 0)
     if ec2_spend > 20:
         recs.append({
-            "action": f"Migrate stateless EC2 workloads to Spot Instances",
+            "action": "Migrate stateless EC2 workloads to Spot Instances",
             "estimated_savings": f"Up to ${ec2_spend * 0.7:,.2f}/mo (70% of EC2 spend)",
             "detail": "Use Mixed-Instance ASG with 70% Spot. See compute_optimized Terraform module.",
         })

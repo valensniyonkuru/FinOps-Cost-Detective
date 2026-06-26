@@ -75,7 +75,7 @@ resource "aws_iam_instance_profile" "asg" {
 resource "aws_launch_template" "main" {
   name_prefix   = "finops-asg-lt-${var.environment}-"
   image_id      = data.aws_ami.amazon_linux.id
-  instance_type = "t3.medium"   # Default; overridden by mixed-instances policy
+  instance_type = "t3.medium" # Default; overridden by mixed-instances policy
 
   iam_instance_profile { arn = aws_iam_instance_profile.asg.arn }
 
@@ -83,7 +83,7 @@ resource "aws_launch_template" "main" {
 
   metadata_options {
     http_endpoint               = "enabled"
-    http_tokens                 = "required"   # IMDSv2 — security best practice
+    http_tokens                 = "required" # IMDSv2 — security best practice
     http_put_response_hop_limit = 1
   }
 

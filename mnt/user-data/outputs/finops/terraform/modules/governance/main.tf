@@ -58,7 +58,7 @@ resource "aws_budgets_budget" "monthly" {
 # ── S3 Bucket for AWS Config ──────────────────────────────────
 resource "aws_s3_bucket" "config" {
   bucket        = var.config_s3_bucket_name
-  force_destroy = true   # Allow destroy in sandbox
+  force_destroy = true # Allow destroy in sandbox
 
   tags = {
     Name    = var.config_s3_bucket_name
@@ -97,24 +97,24 @@ resource "aws_s3_bucket_policy" "config" {
     Version = "2012-10-17"
     Statement = [
       {
-        Sid    = "AWSConfigBucketPermissionsCheck"
-        Effect = "Allow"
+        Sid       = "AWSConfigBucketPermissionsCheck"
+        Effect    = "Allow"
         Principal = { Service = "config.amazonaws.com" }
-        Action   = "s3:GetBucketAcl"
-        Resource = "arn:aws:s3:::${var.config_s3_bucket_name}"
+        Action    = "s3:GetBucketAcl"
+        Resource  = "arn:aws:s3:::${var.config_s3_bucket_name}"
         Condition = {
           StringEquals = { "AWS:SourceAccount" = data.aws_caller_identity.current.account_id }
         }
       },
       {
-        Sid    = "AWSConfigBucketDelivery"
-        Effect = "Allow"
+        Sid       = "AWSConfigBucketDelivery"
+        Effect    = "Allow"
         Principal = { Service = "config.amazonaws.com" }
-        Action   = "s3:PutObject"
-        Resource = "arn:aws:s3:::${var.config_s3_bucket_name}/AWSLogs/${data.aws_caller_identity.current.account_id}/Config/*"
+        Action    = "s3:PutObject"
+        Resource  = "arn:aws:s3:::${var.config_s3_bucket_name}/AWSLogs/${data.aws_caller_identity.current.account_id}/Config/*"
         Condition = {
           StringEquals = {
-            "s3:x-amz-acl"     = "bucket-owner-full-control"
+            "s3:x-amz-acl"      = "bucket-owner-full-control"
             "AWS:SourceAccount" = data.aws_caller_identity.current.account_id
           }
         }
@@ -178,9 +178,9 @@ resource "aws_config_config_rule" "required_tags" {
   }
 
   input_parameters = jsonencode({
-    tag1Key   = "CostCenter"
-    tag2Key   = "Environment"
-    tag3Key   = "Owner"
+    tag1Key = "CostCenter"
+    tag2Key = "Environment"
+    tag3Key = "Owner"
   })
 
   scope {

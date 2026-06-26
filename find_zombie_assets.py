@@ -31,14 +31,6 @@ from datetime import datetime, timedelta, timezone
 import boto3
 from botocore.exceptions import ClientError, NoCredentialsError
 
-try:
-    from rich.console import Console
-    from rich.table import Table
-    from rich.panel import Panel
-    from rich import box
-    RICH_AVAILABLE = True
-except ImportError:
-    RICH_AVAILABLE = False
 
 # ── Rough on-demand pricing USD/month (us-east-1 approximations) ───────────
 EBS_GP2_PRICE_PER_GB  = 0.10
