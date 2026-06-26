@@ -219,6 +219,56 @@ resource "aws_config_config_rule" "eip_attached" {
   depends_on = [aws_config_configuration_recorder_status.main]
 }
 
+# ── IAM Deny Policy: Prevent untagged EC2 launches ───────────
+# This closes the prevention gap: Config detects after the fact;
+# this policy actively blocks ec2:RunInstances at the API level
+# when CostCenter or Environment tags are absent.
+# Attach to any IAM user/group/role that should be restricted.
+resource "aws_iam_policy" "deny_ec2_without_cost_center" {
+  name        = "deny-ec2-without-cost-center-${var.environment}"
+  description = "Denies ec2:RunInstances when CostCenter or Environment tag is missing"
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Sid      = "DenyEC2WithoutCostCenter"
+        Effect   = "Deny"
+        Action   = "ec2:RunInstances"
+        Resource = "arn:aws:ec2:*:*:instance/*"
+        Condition = {
+          Null = { "aws:RequestTag/CostCenter" = "true" }
+        }
+      },
+      {
+        Sid      = "DenyEC2WithoutEnvironment"
+        Effect   = "Deny"
+        Action   = "ec2:RunInstances"
+        Resource = "arn:aws:ec2:*:*:instance/*"
+        Condition = {
+          Null = { "aws:RequestTag/Environment" = "true" }
+        }
+      }
+    ]
+  })
+
+  tags = {
+    Name    = "deny-ec2-without-cost-center-${var.environment}"
+    Purpose = "finops-governance"
+  }
+}
+
+# ── IAM Group: developers bound by the deny policy ───────────
+resource "aws_iam_group" "finops_restricted" {
+  name = "finops-restricted-developers-${var.environment}"
+  path = "/finops/"
+}
+
+resource "aws_iam_group_policy_attachment" "deny_untagged_ec2" {
+  group      = aws_iam_group.finops_restricted.name
+  policy_arn = aws_iam_policy.deny_ec2_without_cost_center.arn
+}
+
 # ── Config Rule 4: Approved Instance Types ───────────────────
 resource "aws_config_config_rule" "approved_instance_types" {
   name = "approved-ec2-instance-types"

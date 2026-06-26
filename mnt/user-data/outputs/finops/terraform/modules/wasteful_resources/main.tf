@@ -6,6 +6,8 @@
 #  Destroy with: terraform destroy -target=module.wasteful_resources
 # ============================================================
 
+data "aws_region" "current" {}
+
 data "aws_ami" "amazon_linux" {
   most_recent = true
   owners      = ["amazon"]
@@ -24,7 +26,7 @@ data "aws_ami" "amazon_linux" {
 # ── 1. Unattached EBS Volumes ────────────────────────────────
 resource "aws_ebs_volume" "zombie" {
   count             = 3
-  availability_zone = "${var.aws_region}a"
+  availability_zone = "${data.aws_region.current.name}a"
   size              = 20 + (count.index * 10)   # 20 GB, 30 GB, 40 GB
   type              = "gp3"
 

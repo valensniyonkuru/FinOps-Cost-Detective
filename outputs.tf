@@ -13,6 +13,16 @@ output "governance_config_s3_bucket" {
   value       = module.governance.config_s3_bucket
 }
 
+output "governance_iam_deny_policy_arn" {
+  description = "ARN of the IAM policy that actively prevents untagged EC2 launches"
+  value       = module.governance.iam_deny_policy_arn
+}
+
+output "governance_iam_restricted_group" {
+  description = "IAM group with the deny policy attached — add users here to enforce tagging"
+  value       = module.governance.iam_restricted_group_name
+}
+
 output "asg_name" {
   description = "Name of the Mixed-Instance Auto Scaling Group"
   value       = module.compute_optimized.asg_name
